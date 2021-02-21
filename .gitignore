@@ -1,0 +1,6 @@
+.idea
+vendor
+.phpcs-cache
+phpcs.xml
+phpstan.neon
+psalm.xml
