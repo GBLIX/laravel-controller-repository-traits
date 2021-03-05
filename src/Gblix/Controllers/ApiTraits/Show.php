@@ -145,6 +145,7 @@ trait Show
     final protected function showResponse(Request $request, RepositoryInterface $repository, $data): Response
     {
         $this->prepareShow($request, $repository);
+        $data = $repository->parserResult($data);
         return $this->makeShowResponse($data);
     }
 }

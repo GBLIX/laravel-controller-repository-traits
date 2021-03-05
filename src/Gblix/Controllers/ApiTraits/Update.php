@@ -150,6 +150,7 @@ trait Update
     final protected function updateResponse(Request $request, RepositoryInterface $repository, $data): Response
     {
         $this->prepareUpdate($request, $repository);
+        $data = $repository->parserResult($data);
         return $this->makeUpdateResponse($data);
     }
 }

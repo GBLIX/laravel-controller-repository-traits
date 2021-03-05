@@ -132,6 +132,7 @@ trait Create
     final protected function storeResponse(Request $request, RepositoryInterface $repository, $data): Response
     {
         $this->prepareStore($request, $repository);
+        $data = $repository->parserResult($data);
         return $this->makeStoreResponse($data);
     }
 

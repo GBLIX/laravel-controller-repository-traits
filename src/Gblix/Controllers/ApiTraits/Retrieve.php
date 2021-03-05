@@ -264,6 +264,7 @@ trait Retrieve
     final protected function retrieveResponse(Request $request, RepositoryInterface $repository, $data): Response
     {
         $this->prepareRetrieve($request, $repository);
+        $data = $repository->parserResult($data);
         return $this->makeIndexResponse($data);
     }
 }
