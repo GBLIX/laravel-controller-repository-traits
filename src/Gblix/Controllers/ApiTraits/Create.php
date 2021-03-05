@@ -5,6 +5,7 @@ namespace Gblix\Controllers\ApiTraits;
 use Clockwork\Clockwork;
 use Gblix\Repository\Contracts\NegociatesPresenterContentInterface;
 use Gblix\Repository\Contracts\RepositoryInterface;
+use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\Request;
 use Lorisleiva\Actions\Action;
 use Symfony\Component\HttpFoundation\Response;
@@ -55,7 +56,9 @@ trait Create
 
         $clockwork->event($clockworkEvent = 'Dispatching store on controller')->begin();
 
-        $data = $request->except(array_keys($request->query()));
+        $query = $request->query();
+        assert(is_array($query));
+        $data = $request->except(array_keys($query));
 
         $user = $request->user();
 
@@ -95,7 +98,7 @@ trait Create
         $repository->skipPresenter(false);
 
         $presenter = $this->getStorePresenter();
-        if ($presenter) {
+        if ($presenter !== null) {
             $repository->setPresenter($presenter);
         }
 
@@ -112,7 +115,9 @@ trait Create
      */
     final protected function makeStoreResponse($data): Response
     {
-        return response()->json($data, 201);
+        /** @var ResponseFactory $response */
+        $response = response();
+        return $response->json($data, 201);
     }
 
     /**

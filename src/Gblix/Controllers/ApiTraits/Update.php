@@ -5,6 +5,7 @@ namespace Gblix\Controllers\ApiTraits;
 use Clockwork\Clockwork;
 use Gblix\Repository\Contracts\NegociatesPresenterContentInterface;
 use Gblix\Repository\Contracts\RepositoryInterface;
+use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\Request;
 use Lorisleiva\Actions\Action;
 use Symfony\Component\HttpFoundation\Response;
@@ -62,7 +63,9 @@ trait Update
         if (is_array($id)) {
             $data = $id;
         } else {
-            $data = $request->except(array_keys($request->query()));
+            $query = $request->query();
+            assert(is_array($query));
+            $data = $request->except(array_keys($query));
             $data['id'] = $id;
         }
 
@@ -104,7 +107,7 @@ trait Update
         $repository->skipPresenter(false);
 
         $presenter = $this->getUpdatePresenter();
-        if ($presenter) {
+        if ($presenter !== null) {
             $repository->setPresenter($presenter);
         }
 
@@ -130,7 +133,9 @@ trait Update
      */
     final protected function makeUpdateResponse($data): Response
     {
-        return response()->json($data);
+        /** @var ResponseFactory $response */
+        $response = response();
+        return $response->json($data);
     }
 
     /**

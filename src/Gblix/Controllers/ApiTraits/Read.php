@@ -4,6 +4,7 @@ namespace Gblix\Controllers\ApiTraits;
 
 use Gblix\Repository\Contracts\RepositoryInterface;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Route;
 use Illuminate\Support\Arr;
 
 /**
@@ -11,6 +12,9 @@ use Illuminate\Support\Arr;
  * @package Gblix\Controllers\ApiTraits
  *
  * @property RepositoryInterface $repository
+ *
+ * @property ?string $routeKey
+ * @property ?string $resource
  */
 trait Read
 {
@@ -19,22 +23,25 @@ trait Read
      * Find and retrieve the id of the current entry.
      *
      * @param Request $request
-     * @return string|int The id in the db or false.
+     * @return mixed The id in the db or false.
      */
     public function getCurrentEntryId(Request $request)
     {
         $route = $request->route();
+        if (!$route instanceof Route) {
+            return null;
+        }
         $params = $route->originalParameters();
 
         $resource = $this->routeKey ?? $this->resource ?? null;
 
-        if (!$resource) {
-            return Arr::last($params, static function ($param) {
+        if ($resource === null) {
+            return Arr::last($params, static function ($param): bool {
                 return is_string($param) || is_numeric($param);
             });
         }
 
-        return $request->{$resource};
+        return $request->get($resource);
     }
 
     /**

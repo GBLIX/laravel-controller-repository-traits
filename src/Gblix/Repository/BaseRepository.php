@@ -5,6 +5,7 @@ namespace Gblix\Repository;
 use Gblix\Repository\Contracts\RepositoryInterface;
 use Illuminate\Http\Request;
 use Prettus\Repository\Eloquent\BaseRepository as PrettusBaseRepository;
+use Prettus\Validator\Contracts\ValidatorInterface;
 
 /**
  * Class BaseRepository
@@ -59,6 +60,25 @@ abstract class BaseRepository extends PrettusBaseRepository implements Repositor
     public function collectionPresenter()
     {
         return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     * @return string|null
+     */
+    public function validator()
+    {
+        return parent::validator();
+    }
+
+    /**
+     * {@inheritDoc}
+     * @param ValidatorInterface|string|null $validator
+     * @return ValidatorInterface|null
+     */
+    public function makeValidator($validator = null)
+    {
+        return parent::makeValidator($validator);
     }
 
     /**

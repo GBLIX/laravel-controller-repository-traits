@@ -5,8 +5,8 @@ namespace Gblix\Controllers\ApiTraits;
 use Clockwork\Clockwork;
 use Gblix\Repository\Contracts\NegociatesPresenterContentInterface;
 use Gblix\Repository\Contracts\RepositoryInterface;
+use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\Request;
-use Prettus\Repository\Contracts\RepositoryCriteriaInterface;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -60,7 +60,7 @@ trait Show
      * Perfoms the data for show methods
      *
      * @param Request $request
-     * @param RepositoryInterface|RepositoryCriteriaInterface $repository
+     * @param RepositoryInterface $repository
      * @param string|int $id
      * @return mixed
      */
@@ -91,7 +91,7 @@ trait Show
         $repository->skipPresenter(false);
 
         $presenter = $this->getShowPresenter();
-        if ($presenter) {
+        if ($presenter !== null) {
             $repository->setPresenter($presenter);
         }
 
@@ -128,7 +128,9 @@ trait Show
      */
     final protected function makeShowResponse($data): Response
     {
-        return response()->json($data);
+        /** @var ResponseFactory $response */
+        $response = response();
+        return $response->json($data);
     }
 
     /**

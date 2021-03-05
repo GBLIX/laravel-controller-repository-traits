@@ -7,7 +7,7 @@ use Gblix\Repositories\Criteria\EntityFilterCriteria;
 use Gblix\Repository\Contracts\NegociatesPresenterContentInterface;
 use Gblix\Repository\Contracts\RepositoryInterface;
 use GrahamCampbell\Binput\Binput;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -96,7 +96,7 @@ trait Retrieve
         $limit = $binput->input('limit');
 
         // Se não foi definido limite e não precisa ser paginado: Exibimos tudo
-        if (!$limit && !$this->willIndexPaginate()) {
+        if ($limit === null && !$this->willIndexPaginate()) {
             $result = $repository->all();
         } else {
             $limit = is_numeric($limit) ? (int)$limit : $limit;
@@ -126,10 +126,10 @@ trait Retrieve
         $repository->skipPresenter(false);
 
         $presenter = $this->getRetrievePresenter();
-        if (!$presenter) {
+        if ($presenter === null) {
             $presenter = $repository->collectionPresenter();
         }
-        if ($presenter) {
+        if ($presenter !== null) {
             $repository->setPresenter($presenter);
         }
 
@@ -185,8 +185,8 @@ trait Retrieve
             $filter = json_decode($filter, true, 5, JSON_THROW_ON_ERROR);
         }
 
-        if ($filter) {
-            $nullValues = array_filter($filter, static function ($value) {
+        if (is_array($filter)) {
+            $nullValues = array_filter($filter, static function ($value): bool {
                 return $value === null;
             });
 
@@ -247,7 +247,9 @@ trait Retrieve
      */
     protected function makeIndexResponse($data): Response
     {
-        return response()->json($data);
+        /** @var ResponseFactory $response */
+        $response = response();
+        return $response->json($data);
     }
 
     /**

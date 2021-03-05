@@ -4,6 +4,7 @@ namespace Gblix\Controllers\ApiTraits;
 
 use Clockwork\Clockwork;
 use Gblix\Repository\Contracts\RepositoryInterface;
+use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\Request;
 use Lorisleiva\Actions\Action;
 use Symfony\Component\HttpFoundation\Response;
@@ -42,7 +43,7 @@ trait Delete
     {
         $id = $id ?? $this->getCurrentEntryId($request);
 
-        if ($job) {
+        if ($job !== null) {
             $result = $this->makeDestroyAction($request, $job, $id);
         } else {
             $result = $this->makeDestroyRepository($this->repository, $id);
@@ -74,7 +75,9 @@ trait Delete
         if (is_array($id)) {
             $data = $id;
         } else {
-            $data = $request->except(array_keys($request->query()));
+            $query = $request->query();
+            assert(is_array($query));
+            $data = $request->except(array_keys($query));
             $data['id'] = $id;
         }
 
@@ -122,10 +125,13 @@ trait Delete
      */
     final protected function makeDestroyResponse($data): Response
     {
+        /** @var ResponseFactory $response */
+        $response = response();
+
         if ($data === true) {
-            return response()->noContent();
+            return $response->noContent();
         }
 
-        return response()->json($data);
+        return $response->json($data);
     }
 }

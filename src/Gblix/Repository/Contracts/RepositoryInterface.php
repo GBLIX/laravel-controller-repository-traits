@@ -8,6 +8,14 @@ use Prettus\Repository\Contracts\RepositoryInterface as BaseRepositoryInterface;
 
 interface RepositoryInterface extends BaseRepositoryInterface, Presentable, RepositoryCriteriaInterface
 {
+
+    /**
+     * Specify Model class name
+     *
+     * @return string
+     */
+    public function model();
+
     /**
      * Specify the Presenter class name used on Collections
      *

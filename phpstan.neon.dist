@@ -8,8 +8,19 @@ includes:
 parameters:
     paths:
         - src
+        - test
 
     # The level 8 is the highest level
     level: max
 
     checkMissingIterableValueType: false
+
+    scanFiles:
+      - vendor/itsgoingd/clockwork/Clockwork/Support/Laravel/helpers.php
+
+    ignoreErrors:
+        - "#Call to function method_exists\\(\\) with \\$this\\(Gblix\\\\Tests\\\\Unit\\\\ControllerStub\\) and 'pushReadCriteria' will always evaluate to true.#"
+        - "#Call to function method_exists\\(\\) with \\$this\\(Gblix\\\\Tests\\\\Unit\\\\RetrieveControllerStub\\) and 'pushReadCriteria' will always evaluate to false.#"
+        - "#Return type \\(string\\|null\\) of method Gblix\\\\Repository\\\\BaseRepository\\:\\:validator\\(\\) should be covariant with return type \\(null\\) of method Prettus\\\\Repository\\\\Eloquent\\\\BaseRepository\\:\\:validator\\(\\)#"
+        - "#Parameter \\#1 \\$validator of method Prettus\\\\Repository\\\\Eloquent\\\\BaseRepository\\:\\:makeValidator\\(\\) expects null, Prettus\\\\Validator\\\\Contracts\\\\ValidatorInterface\\|string\\|null given.#"
+
