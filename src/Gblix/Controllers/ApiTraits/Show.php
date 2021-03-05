@@ -62,9 +62,9 @@ trait Show
      * @param Request $request
      * @param RepositoryInterface|RepositoryCriteriaInterface $repository
      * @param string|int $id
-     * @return array
+     * @return mixed
      */
-    final protected function makeShow(Request $request, RepositoryInterface $repository, $id): array
+    final protected function makeShow(Request $request, RepositoryInterface $repository, $id)
     {
         $repository->resetCriteria();
         $this->pushReadCriteria($repository);
@@ -80,6 +80,8 @@ trait Show
     }
 
     /**
+     * Prepares the repository based on request received
+     *
      * @param Request $request
      * @param RepositoryInterface $repository
      * @return void
@@ -121,11 +123,26 @@ trait Show
     /**
      * Returns the data for show methods
      *
-     * @param array $data
+     * @param mixed $data
      * @return Response
      */
-    final protected function makeShowResponse(array $data): Response
+    final protected function makeShowResponse($data): Response
     {
         return response()->json($data);
+    }
+
+    /**
+     * Prepares the repository based on request received and return the response
+     * with the given data
+     *
+     * @param Request $request
+     * @param RepositoryInterface $repository
+     * @param mixed $data
+     * @return Response
+     */
+    final protected function showResponse(Request $request, RepositoryInterface $repository, $data): Response
+    {
+        $this->prepareShow($request, $repository);
+        return $this->makeShowResponse($data);
     }
 }

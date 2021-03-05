@@ -65,10 +65,10 @@ trait Retrieve
      * @param Request $request
      * @param RepositoryInterface $repository
      *
-     * @return Model[]|iterable
+     * @return mixed
      * @throws \Throwable
      */
-    protected function makeIndex(Request $request, RepositoryInterface $repository): iterable
+    protected function makeIndex(Request $request, RepositoryInterface $repository)
     {
 
         $binput = $this->makeIndexBinput($request);
@@ -115,6 +115,8 @@ trait Retrieve
     }
 
     /**
+     * Prepares the repository based on request received
+     *
      * @param Request $request
      * @param RepositoryInterface $repository
      * @return void
@@ -208,6 +210,7 @@ trait Retrieve
      *
      * @param RepositoryInterface $repository
      * @param Request $request
+     * @return RepositoryInterface
      */
     protected function pushEntityRelations(RepositoryInterface $repository, Request $request): RepositoryInterface
     {
@@ -239,11 +242,26 @@ trait Retrieve
     /**
      * Returns the data for retrieve methods
      *
-     * @param iterable $data
+     * @param mixed $data
      * @return Response
      */
-    protected function makeIndexResponse(iterable $data): Response
+    protected function makeIndexResponse($data): Response
     {
         return response()->json($data);
+    }
+
+    /**
+     * Prepares the repository based on request received and return the response
+     * with the given data
+     *
+     * @param Request $request
+     * @param RepositoryInterface $repository
+     * @param mixed $data
+     * @return Response
+     */
+    final protected function retrieveResponse(Request $request, RepositoryInterface $repository, $data): Response
+    {
+        $this->prepareRetrieve($request, $repository);
+        return $this->makeIndexResponse($data);
     }
 }

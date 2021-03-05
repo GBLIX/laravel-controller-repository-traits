@@ -118,7 +118,7 @@ trait Delete
      * Returns the data for delete methods
      *
      * @param mixed $data
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     final protected function makeDestroyResponse($data): Response
     {

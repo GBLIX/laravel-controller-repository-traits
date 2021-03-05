@@ -50,9 +50,9 @@ trait Update
      * @param Action|string $job
      * @param RepositoryInterface $repository
      * @param mixed $id
-     * @return array|null
+     * @return mixed
      */
-    final protected function makeUpdate(Request $request, $job, RepositoryInterface $repository, $id): ?array
+    final protected function makeUpdate(Request $request, $job, RepositoryInterface $repository, $id)
     {
         /* @var $clockwork Clockwork */
         $clockwork = clock();
@@ -93,6 +93,8 @@ trait Update
     }
 
     /**
+     * Prepares the repository based on request received
+     *
      * @param Request $request
      * @param RepositoryInterface $repository
      * @return void
@@ -123,11 +125,26 @@ trait Update
     /**
      * Returns the data for update methods
      *
-     * @param array|null $data
-     * @return \Illuminate\Http\Response
+     * @param mixed $data
+     * @return Response
      */
-    final protected function makeUpdateResponse(?array $data): Response
+    final protected function makeUpdateResponse($data): Response
     {
         return response()->json($data);
+    }
+
+    /**
+     * Prepares the repository based on request received and return the response
+     * with the given data
+     *
+     * @param Request $request
+     * @param RepositoryInterface $repository
+     * @param mixed $data
+     * @return Response
+     */
+    final protected function updateResponse(Request $request, RepositoryInterface $repository, $data): Response
+    {
+        $this->prepareUpdate($request, $repository);
+        return $this->makeUpdateResponse($data);
     }
 }

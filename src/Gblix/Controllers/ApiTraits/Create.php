@@ -46,9 +46,9 @@ trait Create
      * @param Request $request
      * @param Action|string $job
      * @param RepositoryInterface $repository
-     * @return array|null
+     * @return mixed
      */
-    final protected function makeStore(Request $request, $job, RepositoryInterface $repository): ?array
+    final protected function makeStore(Request $request, $job, RepositoryInterface $repository)
     {
         /* @var $clockwork Clockwork */
         $clockwork = clock();
@@ -84,6 +84,8 @@ trait Create
     }
 
     /**
+     * Prepares the repository based on request received
+     *
      * @param Request $request
      * @param RepositoryInterface $repository
      * @return void
@@ -105,12 +107,27 @@ trait Create
     /**
      * Returns the data for store methods
      *
-     * @param array|null $data
-     * @return \Illuminate\Http\Response
+     * @param mixed $data
+     * @return Response
      */
-    final protected function makeStoreResponse(?array $data): Response
+    final protected function makeStoreResponse($data): Response
     {
         return response()->json($data, 201);
+    }
+
+    /**
+     * Prepares the repository based on request received and return the response
+     * with the given data
+     *
+     * @param Request $request
+     * @param RepositoryInterface $repository
+     * @param mixed $data
+     * @return Response
+     */
+    final protected function storeResponse(Request $request, RepositoryInterface $repository, $data): Response
+    {
+        $this->prepareStore($request, $repository);
+        return $this->makeStoreResponse($data);
     }
 
     /**
