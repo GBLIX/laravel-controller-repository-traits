@@ -56,18 +56,28 @@ trait Create
 
         $clockwork->event($clockworkEvent = 'Dispatching store on controller')->begin();
 
-        $query = $request->query();
-        assert(is_array($query));
-        $data = $request->except(array_keys($query));
-
         $user = $request->user();
 
         if (!$job instanceof Action) {
-            $job = new $job();
+            $job = $job::make();
         }
 
-        $result = $job->actingAs($user)
-            ->run($data);
+        assert(is_object($job));
+
+        if (method_exists($job, 'asController')) {
+            /* Actions as Laravel Actions ^2 */
+            $result = $job->asController($user, $request);
+        } elseif (method_exists($job, 'actingAs')) {
+            /* Actions as Laravel Actions ^1 */
+            $query = $request->query();
+            assert(is_array($query));
+            $data = $request->except(array_keys($query));
+
+            $result = $job->actingAs($user)
+                ->run($data);
+        } else {
+            throw new \RuntimeException('No job to run with ' . get_class($job));
+        }
 
         $clockwork->event($clockworkEvent)->end();
 

@@ -60,23 +60,33 @@ trait Update
 
         $clockwork->event($clockworkEvent = 'Dispatching update on controller')->begin();
 
-        if (is_array($id)) {
-            $data = $id;
-        } else {
-            $query = $request->query();
-            assert(is_array($query));
-            $data = $request->except(array_keys($query));
-            $data['id'] = $id;
-        }
-
         $user = $request->user();
 
         if (!$job instanceof Action) {
-            $job = new $job();
+            $job = $job::make();
         }
 
-        $result = $job->actingAs($user)
-            ->run($data);
+        assert(is_object($job));
+
+        if (method_exists($job, 'asController')) {
+            /* Actions as Laravel Actions ^2 */
+            $result = $job->asController($user, $request, $id);
+        } elseif (method_exists($job, 'actingAs')) {
+            /* Actions as Laravel Actions ^1 */
+            if (is_array($id)) {
+                $data = $id;
+            } else {
+                $query = $request->query();
+                assert(is_array($query));
+                $data = $request->except(array_keys($query));
+                $data['id'] = $id;
+            }
+
+            $result = $job->actingAs($user)
+                ->run($data);
+        } else {
+            throw new \RuntimeException('No job to run with ' . get_class($job));
+        }
 
         $clockwork->event($clockworkEvent)->end();
 

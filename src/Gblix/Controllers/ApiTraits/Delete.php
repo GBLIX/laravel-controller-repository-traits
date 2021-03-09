@@ -68,21 +68,30 @@ trait Delete
         $user = $request->user();
 
         if (!$job instanceof Action) {
-            $job = new $job();
+            $job = $job::make();
         }
 
-        /* @var $jobInstance Action */
-        if (is_array($id)) {
-            $data = $id;
+        assert(is_object($job));
+
+        if (method_exists($job, 'asController')) {
+            /* Actions as Laravel Actions ^2 */
+            $result = $job->asController($user, $request, $id);
+        } elseif (method_exists($job, 'actingAs')) {
+            /* Actions as Laravel Actions ^1 */
+            if (is_array($id)) {
+                $data = $id;
+            } else {
+                $query = $request->query();
+                assert(is_array($query));
+                $data = $request->except(array_keys($query));
+                $data['id'] = $id;
+            }
+
+            $result = $job->actingAs($user)
+                ->run($data);
         } else {
-            $query = $request->query();
-            assert(is_array($query));
-            $data = $request->except(array_keys($query));
-            $data['id'] = $id;
+            throw new \RuntimeException('No job to run with ' . get_class($job));
         }
-
-        $result = $job->actingAs($user)
-            ->run($data);
 
         $clockwork->event($clockworkEvent)->end();
 
