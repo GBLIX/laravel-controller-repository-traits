@@ -26,7 +26,6 @@ trait Retrieve
      * @param Request $request
      *
      * @return Response
-     * @throws \Throwable
      */
     public function index(Request $request): Response
     {
@@ -40,7 +39,6 @@ trait Retrieve
      * @param RepositoryInterface $repository
      *
      * @return Response
-     * @throws \Throwable
      */
     public function runIndex(Request $request, RepositoryInterface $repository): Response
     {
@@ -66,7 +64,6 @@ trait Retrieve
      * @param RepositoryInterface $repository
      *
      * @return mixed
-     * @throws \Throwable
      */
     protected function makeIndex(Request $request, RepositoryInterface $repository)
     {

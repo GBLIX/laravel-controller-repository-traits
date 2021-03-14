@@ -33,7 +33,6 @@ trait Create
      * @param Request $request
      * @param Action|string $job
      * @return Response
-     * @throws \Throwable
      */
     final public function runStore(Request $request, $job): Response
     {
