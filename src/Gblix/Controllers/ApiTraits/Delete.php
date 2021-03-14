@@ -137,7 +137,7 @@ trait Delete
         /** @var ResponseFactory $response */
         $response = response();
 
-        if ($data === true) {
+        if ($data === true || $data === null) {
             return $response->noContent();
         }
 
