@@ -13,7 +13,6 @@ use Prettus\Repository\Presenter\FractalPresenter as BaseFractalPresenter;
 
 abstract class FractalPresenter extends BaseFractalPresenter implements PresenterInterface
 {
-
     /**
      * @var ResourceInterface|null
      */

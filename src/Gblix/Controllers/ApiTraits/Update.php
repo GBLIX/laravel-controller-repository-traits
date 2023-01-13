@@ -20,7 +20,6 @@ use Symfony\Component\HttpFoundation\Response;
  */
 trait Update
 {
-
     /**
      * Default action PATCH (UPDATE) methods
      *
@@ -33,7 +32,7 @@ trait Update
      * Default runner for PATCH (UPDATE) methods
      *
      * @param Request $request
-     * @param Action|string $job
+     * @param Action|mixed|string $job
      * @param mixed|null $id
      * @return Response
      */
@@ -48,7 +47,7 @@ trait Update
      * Perfoms the data for update methods
      *
      * @param Request $request
-     * @param Action|string $job
+     * @param Action|mixed|string $job
      * @param RepositoryInterface $repository
      * @param mixed $id
      * @return mixed
@@ -62,28 +61,37 @@ trait Update
 
         $user = $request->user();
 
-        if (!$job instanceof Action) {
+        if ((!$job instanceof Action && !str_contains(get_parent_class($job), 'Action')) || !is_object($job)) {
             $job = $job::make();
         }
 
         assert(is_object($job));
+        $query = $request->query();
+        assert(is_array($query));
+        $data = $request->except(array_keys($query));
+
+        if (is_array($id)) {
+            $data = $id;
+        } else {
+            $data['id'] = $id;
+        }
 
         if (method_exists($job, 'asController')) {
             /* Actions as Laravel Actions ^2 */
             $result = $job->asController($user, $request, $id);
         } elseif (method_exists($job, 'actingAs')) {
             /* Actions as Laravel Actions ^1 */
-            if (is_array($id)) {
-                $data = $id;
-            } else {
-                $query = $request->query();
-                assert(is_array($query));
-                $data = $request->except(array_keys($query));
-                $data['id'] = $id;
-            }
-
             $result = $job->actingAs($user)
                 ->run($data);
+        } elseif (method_exists($job, 'run')) {
+            if (method_exists($job, 'fill')) {
+                $job->fill($data);
+                $job->fillFromRequest($request);
+            }
+            if (in_array('rules', get_class_methods($job))) {
+                $job->validateAttributes();
+            }
+            $result = $job->handle($data);
         } else {
             throw new \RuntimeException('No job to run with ' . get_class($job));
         }

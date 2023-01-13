@@ -11,7 +11,6 @@ use Prettus\Validator\LaravelValidator;
  */
 class BaseValidator extends LaravelValidator
 {
-
     /**
      * Pass the data and the rules to the validator or throws ValidatorException
      *

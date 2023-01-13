@@ -7,7 +7,6 @@ use Prettus\Repository\Contracts\PresenterInterface as BasePresenterInterfaceAli
 
 interface PresenterInterface extends BasePresenterInterfaceAlias
 {
-
     /**
      * @return Manager
      */

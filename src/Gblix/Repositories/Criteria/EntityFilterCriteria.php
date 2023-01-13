@@ -12,7 +12,6 @@ use Prettus\Repository\Contracts\RepositoryInterface;
  */
 class EntityFilterCriteria implements CriteriaInterface
 {
-
     /**
      * @var array|null
      */

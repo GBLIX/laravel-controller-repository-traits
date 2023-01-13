@@ -19,7 +19,6 @@ use Symfony\Component\HttpFoundation\Response;
  */
 trait Retrieve
 {
-
     /**
      * Default action for GET (INDEX) methods
      *

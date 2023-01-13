@@ -18,7 +18,6 @@ use Symfony\Component\HttpFoundation\Response;
  */
 trait Create
 {
-
     /**
      * Default action POST (STORE) methods
      *
@@ -31,7 +30,7 @@ trait Create
      * Default runner action for POST (STORE) methods
      *
      * @param Request $request
-     * @param Action|string $job
+     * @param Action|mixed|string $job
      * @return Response
      */
     final public function runStore(Request $request, $job): Response
@@ -57,23 +56,31 @@ trait Create
 
         $user = $request->user();
 
-        if (!$job instanceof Action) {
+        if ((!$job instanceof Action && !str_contains(get_parent_class($job), 'Action')) || !is_object($job)) {
             $job = $job::make();
         }
 
         assert(is_object($job));
+        $query = $request->query();
+        assert(is_array($query));
+        $data = $request->except(array_keys($query));
 
         if (method_exists($job, 'asController')) {
             /* Actions as Laravel Actions ^2 */
             $result = $job->asController($user, $request);
         } elseif (method_exists($job, 'actingAs')) {
             /* Actions as Laravel Actions ^1 */
-            $query = $request->query();
-            assert(is_array($query));
-            $data = $request->except(array_keys($query));
-
             $result = $job->actingAs($user)
                 ->run($data);
+        } elseif (method_exists($job, 'run')) {
+            if (method_exists($job, 'fill')) {
+                $job->fill($data);
+                $job->fillFromRequest($request);
+            }
+            if (in_array('rules', get_class_methods($job))) {
+                $job->validateAttributes();
+            }
+            $result = $job->handle($data);
         } else {
             throw new \RuntimeException('No job to run with ' . get_class($job));
         }

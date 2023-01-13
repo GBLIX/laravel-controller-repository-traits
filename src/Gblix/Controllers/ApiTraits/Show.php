@@ -19,7 +19,6 @@ use Symfony\Component\HttpFoundation\Response;
  */
 trait Show
 {
-
     /**
      * Default action for GET (SHOW) methods
      *

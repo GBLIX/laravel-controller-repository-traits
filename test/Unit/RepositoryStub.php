@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 
 final class RepositoryStub extends BaseRepository
 {
-
     public function model()
     {
         return Model::class;

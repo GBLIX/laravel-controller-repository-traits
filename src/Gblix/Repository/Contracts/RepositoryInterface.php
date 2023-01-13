@@ -8,7 +8,6 @@ use Prettus\Repository\Contracts\RepositoryInterface as BaseRepositoryInterface;
 
 interface RepositoryInterface extends BaseRepositoryInterface, Presentable, RepositoryCriteriaInterface
 {
-
     /**
      * Specify Model class name
      *
