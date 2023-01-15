@@ -32,7 +32,7 @@ trait Update
      * Default runner for PATCH (UPDATE) methods
      *
      * @param Request $request
-     * @param Action|mixed|string $job
+     * @param Action|object|string $job
      * @param mixed|null $id
      * @return Response
      */
@@ -47,7 +47,7 @@ trait Update
      * Perfoms the data for update methods
      *
      * @param Request $request
-     * @param Action|mixed|string $job
+     * @param Action|object|string $job
      * @param RepositoryInterface $repository
      * @param mixed $id
      * @return mixed
@@ -61,7 +61,7 @@ trait Update
 
         $user = $request->user();
 
-        if ((!$job instanceof Action && !str_contains(get_parent_class($job), 'Action')) || !is_object($job)) {
+        if (method_exists($job, 'make') && !is_object($job)) {
             $job = $job::make();
         }
 

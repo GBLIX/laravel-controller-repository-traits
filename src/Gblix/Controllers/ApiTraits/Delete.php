@@ -34,7 +34,7 @@ trait Delete
      * Default runner for DELETE methods
      *
      * @param Request $request
-     * @param Action|mixed|string $job
+     * @param Action|object|string $job
      * @param mixed $id
      * @return Response
      */
@@ -53,7 +53,7 @@ trait Delete
 
     /**
      * @param Request $request
-     * @param Action|mixed|string $job
+     * @param Action|object|string $job
      * @param mixed $id
      * @return mixed
      */
@@ -66,7 +66,7 @@ trait Delete
 
         $user = $request->user();
 
-        if ((!$job instanceof Action && !str_contains(get_parent_class($job), 'Action')) || !is_object($job)) {
+        if (method_exists($job, 'make') && !is_object($job)) {
             $job = $job::make();
         }
 

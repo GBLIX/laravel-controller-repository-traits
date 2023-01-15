@@ -30,7 +30,7 @@ trait Create
      * Default runner action for POST (STORE) methods
      *
      * @param Request $request
-     * @param Action|mixed|string $job
+     * @param Action|object|string $job
      * @return Response
      */
     final public function runStore(Request $request, $job): Response
@@ -43,7 +43,7 @@ trait Create
      * Perfoms the data for store methods
      *
      * @param Request $request
-     * @param Action|string $job
+     * @param Action|object|string $job
      * @param RepositoryInterface $repository
      * @return mixed
      */
@@ -56,7 +56,7 @@ trait Create
 
         $user = $request->user();
 
-        if ((!$job instanceof Action && !str_contains(get_parent_class($job), 'Action')) || !is_object($job)) {
+        if (method_exists($job, 'make') && !is_object($job)) {
             $job = $job::make();
         }
 
