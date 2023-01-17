@@ -10,7 +10,6 @@ use Illuminate\Http\Request;
  */
 interface NegociatesPresenterContentInterface
 {
-
     /**
      * Define the presenter to be used based on request
      *

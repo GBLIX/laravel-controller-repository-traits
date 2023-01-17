@@ -12,7 +12,6 @@ use Illuminate\Support\ServiceProvider;
  */
 class EloquentMacroServiceProvider extends ServiceProvider
 {
-
     /**
      * Bootstrap the application services.
      *

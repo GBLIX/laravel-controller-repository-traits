@@ -18,7 +18,6 @@ use Illuminate\Support\Arr;
  */
 trait Read
 {
-
     /**
      * Find and retrieve the id of the current entry.
      *

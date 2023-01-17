@@ -6,7 +6,6 @@ use Gblix\Presenters\FractalPresenter;
 
 class PresenterStub extends FractalPresenter
 {
-
     public function getTransformer()
     {
         return new TransformerStub();
