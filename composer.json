@@ -24,7 +24,9 @@
         "phpstan/phpstan-phpunit": "^1.0",
         "phpstan/phpstan-strict-rules": "^1.0",
         "squizlabs/php_codesniffer": "^3.5.5",
-        "vimeo/psalm": "^4.5.2"
+        "vimeo/psalm": "^4.5.2",
+        "spatie/laravel-package-tools": "^1.16",
+        "orchestra/testbench": "^8.29"
     },
     "autoload": {
         "psr-0": {
