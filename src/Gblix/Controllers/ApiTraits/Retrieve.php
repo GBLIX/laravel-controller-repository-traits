@@ -6,7 +6,6 @@ use Clockwork\Clockwork;
 use Gblix\Repositories\Criteria\EntityFilterCriteria;
 use Gblix\Repository\Contracts\NegociatesPresenterContentInterface;
 use Gblix\Repository\Contracts\RepositoryInterface;
-use GrahamCampbell\Binput\Binput;
 use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -67,15 +66,13 @@ trait Retrieve
     protected function makeIndex(Request $request, RepositoryInterface $repository)
     {
 
-        $binput = $this->makeIndexBinput($request);
-
         $repository->resetCriteria();
 
         $repository = $this->pushEntityRelations($repository, $request);
 
         //Can use entity filter
         if (method_exists($repository->model(), 'scopeFilter')) {
-            $repository = $repository = $this->pushEntityFilterCriteria($repository, $binput);
+            $repository = $this->pushEntityFilterCriteria($repository, $request);
         }
 
         //Not applied for now
@@ -89,7 +86,7 @@ trait Retrieve
 
         $this->prepareRetrieve($request, $repository);
 
-        $limit = $binput->input('limit');
+        $limit = $request->input('limit');
 
         // Se não foi definido limite e não precisa ser paginado: Exibimos tudo
         if ($limit === null && !$this->willIndexPaginate()) {
@@ -144,24 +141,12 @@ trait Retrieve
         return true;
     }
 
-
     /**
      * @param Request $request
-     * @return Binput
-     */
-    protected function makeIndexBinput(Request $request): Binput
-    {
-        $binput = app('binput');
-        $binput->setRequest($request);
-        return $binput;
-    }
-
-    /**
-     * @param Binput $binput
      * @param array $data
      * @return array
      */
-    protected function filterRequestToEntityFilter(Binput $binput, array $data): array
+    protected function filterRequestToEntityFilter(Request $request, array $data): array
     {
         return $data;
     }
@@ -170,13 +155,13 @@ trait Retrieve
      * Add Entity Filter Criteria to index
      *
      * @param RepositoryInterface $repository
-     * @param Binput $binput
+     * @param Request $request
      *
      * @return RepositoryInterface
      */
-    protected function pushEntityFilterCriteria(RepositoryInterface $repository, Binput $binput): RepositoryInterface
+    protected function pushEntityFilterCriteria(RepositoryInterface $repository, Request $request): RepositoryInterface
     {
-        $filter = $binput->getRequest()->input('filter', []);
+        $filter = $request->input('filter', []);
         if (is_string($filter)) {
             $filter = json_decode($filter, true, 5, JSON_THROW_ON_ERROR);
         }
@@ -186,7 +171,7 @@ trait Retrieve
                 return $value === null;
             });
 
-            $data = $binput->clean($filter);
+            $data = $request->input();
 
             foreach ($nullValues as $key => $value) {
                 $data[$key] = $value;
@@ -195,7 +180,7 @@ trait Retrieve
             $data = $filter;
         }
 
-        $data = $this->filterRequestToEntityFilter($binput, $data);
+        $data = $this->filterRequestToEntityFilter($request, $data);
         $repository->pushCriteria(new EntityFilterCriteria($data));
 
         return $repository;

@@ -8,26 +8,11 @@
             "email": "stephan@gblix.net"
         }
     ],
-    "repositories": [
-        {
-            "type": "package",
-            "package": {
-                "name": "graham-campbell/binput",
-                "version": "12.0.0",
-                "source": {
-                    "url": "https://github.com/stephandesouza/Laravel-Binput.git",
-                    "type": "git",
-                    "reference": "cccf6bf"
-                }
-            }
-        }
-    ],
     "require": {
         "php": "^8.3",
         "ext-json": "*",
         "lorisleiva/laravel-actions": "^2.8",
         "itsgoingd/clockwork": "^5.2",
-        "graham-campbell/binput": "^12.0",
         "spatie/laravel-fractal": "^6.3",
         "prettus/l5-repository": "^2.10"
     },
