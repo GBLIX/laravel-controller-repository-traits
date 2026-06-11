@@ -20,6 +20,6 @@ final class CreateControllerStub extends Controller
 
     public function store(Request $request): Response
     {
-        return $this->makeStoreResponse([]);
+        return $this->runStore($request, new StoreJobStub());
     }
 }
