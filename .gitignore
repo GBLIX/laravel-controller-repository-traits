@@ -1,7 +1,11 @@
 .idea
 vendor
+vendor-*
+composer-l*.json
+composer-l*.lock
 .phpcs-cache
 .phpunit.result.cache
+.phpunit.cache
 phpcs.xml
 phpstan.neon
 psalm.xml

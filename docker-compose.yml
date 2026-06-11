@@ -1,0 +1,61 @@
+services:
+  # Laravel 13 matrix (canonical: updates the committed composer.lock and vendor/)
+  test-l13:
+    build:
+      context: .
+      args:
+        PHP_VERSION: "8.4"
+    image: gblix-traits-test:php8.4
+    user: "${UID:-1000}:${GID:-1000}"
+    working_dir: /app
+    volumes:
+      - .:/app
+      - composer-cache:/composer
+    environment:
+      COMPOSER_HOME: /composer
+      COMPOSER_CACHE_DIR: /composer/cache
+      TESTBENCH_CONSTRAINT: ^11.0
+      MATRIX: default
+    command: scripts/run-tests.sh
+
+  # Laravel 12 matrix (isolated composer-l12.json/.lock and vendor-l12/, all gitignored)
+  test-l12:
+    build:
+      context: .
+      args:
+        PHP_VERSION: "8.3"
+    image: gblix-traits-test:php8.3
+    user: "${UID:-1000}:${GID:-1000}"
+    working_dir: /app
+    volumes:
+      - .:/app
+      - composer-cache:/composer
+    environment:
+      COMPOSER_HOME: /composer
+      COMPOSER_CACHE_DIR: /composer/cache
+      TESTBENCH_CONSTRAINT: ^10.0
+      MATRIX: l12
+    command: scripts/run-tests.sh
+
+  # Laravel 12 + prettus/l5-repository 2.x matrix (other side of the dual constraint)
+  test-l12-prettus2:
+    build:
+      context: .
+      args:
+        PHP_VERSION: "8.3"
+    image: gblix-traits-test:php8.3
+    user: "${UID:-1000}:${GID:-1000}"
+    working_dir: /app
+    volumes:
+      - .:/app
+      - composer-cache:/composer
+    environment:
+      COMPOSER_HOME: /composer
+      COMPOSER_CACHE_DIR: /composer/cache
+      TESTBENCH_CONSTRAINT: ^10.0
+      PRETTUS_CONSTRAINT: ^2.10
+      MATRIX: l12p2
+    command: scripts/run-tests.sh
+
+volumes:
+  composer-cache:

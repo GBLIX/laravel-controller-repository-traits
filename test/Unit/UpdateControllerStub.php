@@ -22,6 +22,6 @@ final class UpdateControllerStub extends Controller
 
     public function update(Request $request): Response
     {
-        return $this->makeUpdateResponse([]);
+        return $this->runUpdate($request, new UpdateJobStub());
     }
 }

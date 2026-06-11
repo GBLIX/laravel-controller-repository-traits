@@ -1,0 +1,19 @@
+name: Tests
+
+on:
+  push:
+    branches: ['**']
+  pull_request:
+
+jobs:
+  tests:
+    name: All matrices (docker compose)
+    runs-on: ubuntu-latest
+    env:
+      UID: '1001'
+      GID: '1001'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run all test matrices
+        run: ./scripts/test-all.sh

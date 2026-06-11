@@ -3,13 +3,12 @@
 namespace Gblix\Tests\Unit;
 
 use Gblix\Repository\BaseRepository;
-use Illuminate\Database\Eloquent\Model;
 
 final class RepositoryStub extends BaseRepository
 {
     public function model()
     {
-        return Model::class;
+        return ModelStub::class;
     }
 
     public function presenter()
