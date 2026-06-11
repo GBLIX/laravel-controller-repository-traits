@@ -2,6 +2,7 @@
     "name": "gblix/laravel-controller-repository-traits",
     "description": "Traits para Controllers de Laravel facilitando uso da lib `prettus/l5-repository`",
     "type": "library",
+    "license": "MIT",
     "authors": [
         {
             "name": "Stephan de Souza",

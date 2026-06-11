@@ -13,6 +13,7 @@
   and PHP 8.4/Laravel 13; no tooling required on the host machine.
 - GitHub Actions CI (both matrices) and tag-triggered release workflow.
 - README documentation and maintenance guide (CLAUDE.md).
+- MIT license (LICENSE file + composer.json `license` field).
 
 ### Changed
 - `orchestra/testbench` dev constraint bumped to `^10.0 || ^11.0`.
