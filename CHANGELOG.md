@@ -1,5 +1,30 @@
 # Changelog
 
+## 1.9.0 — 2026-07-06
+
+### Removed
+- **`itsgoingd/clockwork` dependency** and all `clock()` profiling calls from the API traits
+  (`Retrieve`, `Show`, `Create`, `Update`, `Delete`). Clockwork was a production `require`, so it
+  was installed in every consuming app purely for controller-level instrumentation.
+  **Breaking for consumers that relied on the transitive dependency**: if you still want
+  Clockwork, require `itsgoingd/clockwork` directly in your app.
+
+### Fixed
+- `index` no longer returns HTTP 500 on malformed or scalar `filter` query input
+  (`?filter=notjson`, `?filter=5`); such input now degrades to "no filter" instead of throwing
+  `JsonException`/`TypeError`.
+- Plain job dispatch in `Create`/`Update`/`Delete` now honours the documented `run()`/`handle()`
+  contract: the branch matches on `handle()` **or** `run()` and calls whichever exists, instead of
+  gating on `run()` while always calling `handle()`.
+- `PresenterInterface::getResourceKeyItem()`/`getResourceKeyCollection()` (and the `FractalPresenter`
+  implementations) now return `?string`, matching the Prettus base where these keys default to
+  `null` — avoids a `TypeError` when a presenter doesn't set both keys.
+
+### Changed
+- Autoloading switched from deprecated PSR-0 to PSR-4 (`Gblix\` → `src/Gblix/`); resolves to the
+  same paths and removes Composer's PSR-0 deprecation warning.
+- README/CLAUDE.md doc corrections (three test matrices, not two).
+
 ## 1.8.0 — 2026-06-11
 
 ### Added

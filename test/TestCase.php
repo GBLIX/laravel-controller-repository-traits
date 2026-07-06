@@ -2,7 +2,6 @@
 
 namespace Gblix\Tests;
 
-use Clockwork\Support\Laravel\ClockworkServiceProvider;
 use Gblix\ServiceProviders\EloquentMacroServiceProvider;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -12,7 +11,6 @@ class TestCase extends \Orchestra\Testbench\TestCase
     protected function getPackageProviders($app)
     {
         return [
-            ClockworkServiceProvider::class,
             EloquentMacroServiceProvider::class,
         ];
     }

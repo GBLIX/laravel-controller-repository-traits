@@ -216,7 +216,7 @@ matrices use isolated `composer-<matrix>.json`/`.lock`/`vendor-<matrix>/` artifa
 
 ## Releasing
 
-1. Merge to `master` via pull request (CI runs both matrices).
+1. Merge to `master` via pull request (CI runs all three matrices).
 2. Tag the release (`git tag 1.8.0 && git push origin 1.8.0`).
 3. The `Release` workflow re-runs the matrices and creates the GitHub Release; Packagist syncs
    automatically.

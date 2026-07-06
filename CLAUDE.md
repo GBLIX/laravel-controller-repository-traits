@@ -14,7 +14,7 @@ these traits in every controller).
 ## Architecture map
 
 ```
-src/Gblix/  (PSR-0 autoload: "Gblix\" => "src")
+src/Gblix/  (PSR-4 autoload: "Gblix\" => "src/Gblix/")
 ├── Controllers/ApiTraits/
 │   ├── Retrieve.php  index(): limit semantics (null→paginate, 0→paginateNoLimit, -1→paginateAll),
 │   │                 EntityFilterCriteria push when model has scopeFilter, presenter negotiation
@@ -45,8 +45,8 @@ src/Gblix/  (PSR-0 autoload: "Gblix\" => "src")
 ```
 
 Tests: `test/Unit/*Test.php` with stubs (`*Stub.php`) over orchestra/testbench + in-memory sqlite.
-`test/TestCase.php` registers ClockworkServiceProvider (the traits call the `clock()` helper) and
-EloquentMacroServiceProvider, and provides `setUpDatabase()` (creates `model_stubs` table).
+`test/TestCase.php` registers EloquentMacroServiceProvider and provides `setUpDatabase()`
+(creates `model_stubs` table).
 
 ## Prettus coupling (what to re-audit on a prettus major bump)
 
@@ -81,7 +81,6 @@ Prettus methods the traits call: `resetCriteria`, `pushCriteria`, `skipPresenter
 | prettus/l5-repository | `^2.10 \|\| ^4.0` | 4.0.0 (illuminate ^8…^13, php ^8.2) |
 | spatie/laravel-fractal | `^6.3` | 6.4.0 |
 | lorisleiva/laravel-actions | `^2.8` | v2.10.1 (illuminate ^11\|^12\|^13, php ^8.2) |
-| itsgoingd/clockwork | `^5.2` | any (no illuminate constraints) |
 | orchestra/testbench (dev) | `^10.0 \|\| ^11.0` | v11 = Laravel 13 (php ^8.3); v10 = Laravel 12 |
 | spatie/laravel-package-tools (dev) | `^1.92` | 1.93.1 |
 

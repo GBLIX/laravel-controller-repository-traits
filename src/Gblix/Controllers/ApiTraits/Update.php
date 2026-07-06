@@ -2,7 +2,6 @@
 
 namespace Gblix\Controllers\ApiTraits;
 
-use Clockwork\Clockwork;
 use Gblix\Repository\Contracts\NegociatesPresenterContentInterface;
 use Gblix\Repository\Contracts\RepositoryInterface;
 use Illuminate\Contracts\Routing\ResponseFactory;
@@ -54,11 +53,6 @@ trait Update
      */
     final protected function makeUpdate(Request $request, $job, RepositoryInterface $repository, $id)
     {
-        /* @var $clockwork Clockwork */
-        $clockwork = clock();
-
-        $clockwork->event($clockworkEvent = 'Dispatching update on controller')->begin();
-
         $user = $request->user();
 
         if (method_exists($job, 'make') && !is_object($job)) {
@@ -83,7 +77,7 @@ trait Update
             /* Actions as Laravel Actions ^1 */
             $result = $job->actingAs($user)
                 ->run($data);
-        } elseif (method_exists($job, 'run')) {
+        } elseif (method_exists($job, 'handle') || method_exists($job, 'run')) {
             if (method_exists($job, 'fill')) {
                 $job->fill($data);
                 $job->fillFromRequest($request);
@@ -91,24 +85,18 @@ trait Update
             if (in_array('rules', get_class_methods($job))) {
                 $job->validateAttributes();
             }
-            $result = $job->handle($data);
+            $result = method_exists($job, 'handle') ? $job->handle($data) : $job->run($data);
         } else {
             throw new \RuntimeException('No job to run with ' . get_class($job));
         }
-
-        $clockwork->event($clockworkEvent)->end();
 
         if (!$result) {
             return $result;
         }
 
-        $clockwork->event($clockworkEvent = 'Parsing update response on controller')->begin();
-
         $this->prepareUpdate($request, $repository);
 
         $result = $repository->parserResult($result);
-
-        $clockwork->event($clockworkEvent)->end();
 
         return $result;
     }
