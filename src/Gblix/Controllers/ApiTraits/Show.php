@@ -2,7 +2,6 @@
 
 namespace Gblix\Controllers\ApiTraits;
 
-use Clockwork\Clockwork;
 use Gblix\Repository\Contracts\NegociatesPresenterContentInterface;
 use Gblix\Repository\Contracts\RepositoryInterface;
 use Illuminate\Contracts\Routing\ResponseFactory;
@@ -39,18 +38,11 @@ trait Show
      */
     final public function runShow(Request $request, $id = null): Response
     {
-        /* @var $clockwork Clockwork */
-        $clockwork = clock();
-
-        $clockwork->event($clockworkEvent = 'Running show action on controller')->begin();
-
         $id = $id ?? $this->getCurrentEntryId($request);
 
         $data = $this->makeShow($request, $this->repository, $id);
 
         $response = $this->makeShowResponse($data);
-
-        $clockwork->event($clockworkEvent)->end();
 
         return $response;
     }

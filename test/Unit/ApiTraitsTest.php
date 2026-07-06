@@ -14,6 +14,8 @@ final class ApiTraitsTest extends TestCase
 
         Route::get('/stubs', [RetrieveControllerStub::class, 'index']);
         Route::post('/stubs', [CreateControllerStub::class, 'store']);
+        Route::post('/stubs-handle-only', [CreateHandleOnlyControllerStub::class, 'store']);
+        Route::post('/stubs-run-only', [CreateRunOnlyControllerStub::class, 'store']);
         Route::get('/stubs/{id}', [ShowControllerStub::class, 'show']);
         Route::patch('/stubs/{id}', [UpdateControllerStub::class, 'update']);
         Route::delete('/stubs/{id}', [DeleteControllerStub::class, 'destroy']);
@@ -64,6 +66,44 @@ final class ApiTraitsTest extends TestCase
             ->assertOk()
             ->assertJsonCount(1, 'data')
             ->assertJsonPath('data.0.name', 'Model 2');
+    }
+
+    public function testIndexWithNonJsonFilterDegradesGracefully(): void
+    {
+        $this->seedModels(3);
+
+        // Malformed JSON in ?filter used to throw JsonException → HTTP 500.
+        $this->getJson('/stubs?filter=notjson')
+            ->assertOk()
+            ->assertJsonCount(3, 'data');
+    }
+
+    public function testIndexWithScalarFilterDegradesGracefully(): void
+    {
+        $this->seedModels(3);
+
+        // A scalar JSON filter used to reach an array-typed method → TypeError → HTTP 500.
+        $this->getJson('/stubs?filter=5')
+            ->assertOk()
+            ->assertJsonCount(3, 'data');
+    }
+
+    public function testStoreDispatchesHandleOnlyJob(): void
+    {
+        $this->postJson('/stubs-handle-only', ['name' => 'FromHandle'])
+            ->assertCreated()
+            ->assertJsonPath('data.name', 'FromHandle');
+
+        $this->assertSame(1, ModelStub::query()->where('name', 'FromHandle')->count());
+    }
+
+    public function testStoreDispatchesRunOnlyJob(): void
+    {
+        $this->postJson('/stubs-run-only', ['name' => 'FromRun'])
+            ->assertCreated()
+            ->assertJsonPath('data.name', 'FromRun');
+
+        $this->assertSame(1, ModelStub::query()->where('name', 'FromRun')->count());
     }
 
     public function testShowReturnsPresentedItem(): void

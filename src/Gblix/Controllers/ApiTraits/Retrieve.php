@@ -2,7 +2,6 @@
 
 namespace Gblix\Controllers\ApiTraits;
 
-use Clockwork\Clockwork;
 use Gblix\Repositories\Criteria\EntityFilterCriteria;
 use Gblix\Repository\Contracts\NegociatesPresenterContentInterface;
 use Gblix\Repository\Contracts\RepositoryInterface;
@@ -40,19 +39,11 @@ trait Retrieve
      */
     public function runIndex(Request $request, RepositoryInterface $repository): Response
     {
-
-        /* @var $clockwork Clockwork */
-        $clockwork = clock();
-
-        $clockwork->event($clockworkEvent = 'Running index action on controller')->begin();
-
         $data = $this->makeIndex($request, $repository);
 
-        $reponse = $this->makeIndexResponse($data);
+        $response = $this->makeIndexResponse($data);
 
-        $clockwork->event($clockworkEvent)->end();
-
-        return $reponse;
+        return $response;
     }
 
     /**
@@ -163,21 +154,26 @@ trait Retrieve
     {
         $filter = $request->input('filter', []);
         if (is_string($filter)) {
-            $filter = json_decode($filter, true, 5, JSON_THROW_ON_ERROR);
+            try {
+                $filter = json_decode($filter, true, 5, JSON_THROW_ON_ERROR);
+            } catch (\JsonException) {
+                $filter = [];
+            }
         }
 
-        if (is_array($filter)) {
-            $nullValues = array_filter($filter, static function ($value): bool {
-                return $value === null;
-            });
+        // Malformed or scalar filter input degrades to "no filter" rather than a 500.
+        if (!is_array($filter)) {
+            $filter = [];
+        }
 
-            $data = $request->input();
+        $nullValues = array_filter($filter, static function ($value): bool {
+            return $value === null;
+        });
 
-            foreach ($nullValues as $key => $value) {
-                $data[$key] = $value;
-            }
-        } else {
-            $data = $filter;
+        $data = $request->input();
+
+        foreach ($nullValues as $key => $value) {
+            $data[$key] = $value;
         }
 
         $data = $this->filterRequestToEntityFilter($request, $data);

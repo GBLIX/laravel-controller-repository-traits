@@ -43,7 +43,7 @@ abstract class FractalPresenter extends BaseFractalPresenter implements Presente
     /**
      * {@inheritdoc}
      */
-    public function getResourceKeyItem(): string
+    public function getResourceKeyItem(): ?string
     {
         return $this->resourceKeyItem;
     }
@@ -51,7 +51,7 @@ abstract class FractalPresenter extends BaseFractalPresenter implements Presente
     /**
      * {@inheritdoc}
      */
-    public function getResourceKeyCollection(): string
+    public function getResourceKeyCollection(): ?string
     {
         return $this->resourceKeyCollection;
     }

@@ -13,12 +13,12 @@ interface PresenterInterface extends BasePresenterInterfaceAlias
     public function getFractal(): Manager;
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getResourceKeyItem(): string;
+    public function getResourceKeyItem(): ?string;
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getResourceKeyCollection(): string;
+    public function getResourceKeyCollection(): ?string;
 }
