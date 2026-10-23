@@ -55,9 +55,7 @@ trait Create
         }
 
         assert(is_object($job));
-        $query = $request->query();
-        assert(is_array($query));
-        $data = $request->except(array_keys($query));
+        $data = $request->all();
 
         if (method_exists($job, 'asController')) {
             /* Actions as Laravel Actions ^2 */
