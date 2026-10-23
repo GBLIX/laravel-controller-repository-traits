@@ -19,6 +19,11 @@ final class ApiTraitsTest extends TestCase
         Route::get('/stubs/{id}', [ShowControllerStub::class, 'show']);
         Route::patch('/stubs/{id}', [UpdateControllerStub::class, 'update']);
         Route::delete('/stubs/{id}', [DeleteControllerStub::class, 'destroy']);
+        Route::post('/payload', [PayloadControllerStub::class, 'store']);
+        Route::patch('/payload/{id}', [PayloadControllerStub::class, 'update']);
+        Route::delete('/payload/{id}', [PayloadControllerStub::class, 'destroy']);
+
+        PayloadRecordingJobStub::$received = null;
     }
 
     private function seedModels(int $count): void
@@ -142,5 +147,42 @@ final class ApiTraitsTest extends TestCase
         $this->deleteJson('/stubs/1')->assertNoContent();
 
         $this->assertSame(0, ModelStub::query()->count());
+    }
+
+    public function testStoreJobReceivesKeysSentOnlyInTheQueryString(): void
+    {
+        $this->postJson('/payload?only_in_query=q', ['name' => 'Body'])->assertCreated();
+
+        $this->assertSame('q', PayloadRecordingJobStub::$received['only_in_query'] ?? null);
+        $this->assertSame('Body', PayloadRecordingJobStub::$received['name'] ?? null);
+    }
+
+    public function testStoreJobPrefersTheBodyOverTheQueryStringOnTheSameKey(): void
+    {
+        $this->postJson('/payload?name=Query', ['name' => 'Body'])->assertCreated();
+
+        $this->assertSame('Body', PayloadRecordingJobStub::$received['name'] ?? null);
+    }
+
+    public function testUpdateJobReceivesQueryStringKeysWhileTheRouteIdWins(): void
+    {
+        $this->seedModels(1);
+
+        $this->patchJson('/payload/1?only_in_query=q&id=99&name=Query', ['name' => 'Body', 'id' => 77])
+            ->assertOk();
+
+        $this->assertSame('q', PayloadRecordingJobStub::$received['only_in_query'] ?? null);
+        $this->assertSame('Body', PayloadRecordingJobStub::$received['name'] ?? null);
+        $this->assertSame('1', PayloadRecordingJobStub::$received['id'] ?? null);
+    }
+
+    public function testDestroyJobReceivesQueryStringKeysWhileTheRouteIdWins(): void
+    {
+        $this->seedModels(1);
+
+        $this->deleteJson('/payload/1?only_in_query=q&id=99', ['id' => 77])->assertSuccessful();
+
+        $this->assertSame('q', PayloadRecordingJobStub::$received['only_in_query'] ?? null);
+        $this->assertSame('1', PayloadRecordingJobStub::$received['id'] ?? null);
     }
 }

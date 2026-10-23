@@ -60,9 +60,7 @@ trait Update
         }
 
         assert(is_object($job));
-        $query = $request->query();
-        assert(is_array($query));
-        $data = $request->except(array_keys($query));
+        $data = $request->all();
 
         if (is_array($id)) {
             $data = $id;

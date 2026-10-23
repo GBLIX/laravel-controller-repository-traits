@@ -1,5 +1,21 @@
 # Changelog
 
+## 1.9.1 — 2026-10-22
+
+### Fixed
+- `Create`/`Update`/`Delete` now hand the job the full request input (`$request->all()`) for
+  Laravel Actions v1 (`actingAs()->run()`) and plain `run()`/`handle()` jobs. Previously every key
+  present in the query string was stripped from `$data` — so a key sent only via the query string
+  never reached the attributes validated by `actingAs()->run($data)` (e.g. `missing` rules were
+  bypassed and the key silently dropped), and a key sent in both the body and the query string was dropped entirely instead of
+  keeping the body value. Precedence is now Laravel's own: body wins over query string on the same
+  key, and in `Update`/`Delete` the route id still overrides any `id` in the input.
+
+### Upgrade notes
+- Query-string keys (e.g. `include`, `filter`) now reach the job's `$data`. Jobs that pass
+  `$data` straight into a model with `$guarded = []` may now receive unknown columns from the
+  query string, exactly as they already would from an unknown body key.
+
 ## 1.9.0 — 2026-07-06
 
 ### Removed
